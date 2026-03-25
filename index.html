@@ -1,14 +1,170 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset='UTF-8'>
-  <title>2026-27 Proposal Shortlist Tool</title>
-  <link rel='stylesheet' href='style.css'>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>2026-27 Proposal Shortlist Tool</title>
+<style>
+  body {
+    background: #222544;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .group-title {
+    text-align: left;
+    font-size: 1.4rem;
+    margin: 30px 0 10px;
+    opacity: 0.9;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: auto;
+  }
+
+  .tile {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 18px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .tile:hover {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .selected {
+    border-color: #4cff8f;
+    background: rgba(76, 255, 143, 0.15);
+    box-shadow: 0 0 12px rgba(76, 255, 143, 0.4);
+  }
+
+  button {
+    margin-top: 30px;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    background: #4cff8f;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+
+  button:hover {
+    background: #34d876;
+  }
+</style>
 </head>
 <body>
   <h1>2026-27 Proposal Shortlist Tool</h1>
-  <div id='app'></div>
-  <script src='script.js'></script>
+  <div class="container" id="app"></div>
+  <button onclick="submitShortlist()">Submit Shortlist</button>
+
+<script>
+const groups = {
+  Education: [
+    "Aurora Learning Hub",
+    "BrightPath Outreach",
+    "FutureMinds Initiative",
+    "ScholarsRise Programme",
+    "LeapForward Academy"
+  ],
+  Environment: [
+    "GreenPulse Energy Lab",
+    "EcoBridge Project",
+    "BlueEarth Restoration",
+    "CleanFuture Initiative",
+    "NatureNest Revive"
+  ],
+  Community: [
+    "CommunityConnect Hub",
+    "UnityWorks Partnership",
+    "PeopleFirst Collaboration",
+    "TogetherWeGrow",
+    "NeighbourBright Project"
+  ],
+  Health: [
+    "HealthBridge Access",
+    "WellLife Network",
+    "VitalCare Initiative",
+    "MindfulSteps Programme",
+    "StrongerTomorrow Health Hub"
+  ]
+};
+
+let shortlist = [];
+
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  for (const group in groups) {
+    const title = document.createElement("div");
+    title.className = "group-title";
+    title.textContent = group;
+    app.appendChild(title);
+
+    groups[group].forEach((project) => {
+      const tile = document.createElement("div");
+      tile.className = "tile";
+      tile.textContent = project;
+
+      if (shortlist.includes(project)) tile.classList.add("selected");
+
+      tile.onclick = () => {
+        if (shortlist.includes(project)) {
+          shortlist = shortlist.filter((x) => x !== project);
+        } else {
+          shortlist.push(project);
+        }
+        render();
+      };
+
+      app.appendChild(tile);
+    });
+  }
+}
+
+function submitShortlist() {
+  if (shortlist.length === 0) {
+    alert("Please select at least one project.");
+    return;
+  }
+
+  const message = `My shortlisted projects:\n${shortlist
+    .map((p) => "- " + p)
+    .join("\n")}`;
+
+  const encoded = encodeURIComponent(message);
+
+  // Offer user options
+  const useWhatsApp = confirm(
+    "Press OK to share via WhatsApp, or Cancel to share via Email."
+  );
+
+  if (useWhatsApp) {
+    window.open(`https://wa.me/?text=${encoded}`, "_blank");
+  } else {
+    window.location.href = `mailto:?subject=My%20Project%20Shortlist&body=${encoded}`;
+  }
+}
+
+render();
+</script>
 </body>
 </html>
