@@ -2,108 +2,149 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>2026-27 Proposal Shortlist Tool</title>
+
+<!-- Google Font: Montserrat -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
   body {
-    background: #222544;
-    color: white;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background: #ffffff;
+    color: #222544;
+    font-family: "Montserrat", sans-serif;
     margin: 0;
     padding: 20px;
     text-align: center;
   }
 
   h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+    font-size: 2.4rem;
+    margin-bottom: 5px;
   }
 
-  .group-title {
-    text-align: left;
-    font-size: 1.4rem;
-    margin: 30px 0 10px;
-    opacity: 0.9;
+  .subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 35px;
+    opacity: 0.8;
   }
 
   .container {
     max-width: 900px;
     margin: auto;
+    text-align: left;
   }
 
+  .group-title {
+    font-size: 1.6rem;
+    margin: 30px 0 10px;
+    font-weight: 600;
+  }
+
+  /* Base tile style */
   .tile {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 18px;
+    padding: 18px 18px 18px 55px;
     margin: 10px 0;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
     cursor: pointer;
     transition: all 0.25s ease;
+    position: relative;
+    opacity: 0.4; /* 40% opacity default */
+    color: white;
+    backdrop-filter: blur(6px);
   }
 
   .tile:hover {
-    transform: scale(1.02);
-    background: rgba(255, 255, 255, 0.12);
+    transform: scale(1.015);
   }
 
+  /* Checkbox styling */
+  .checkbox {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%) scale(1.4);
+    pointer-events: none;
+  }
+
+  /* Selected state */
   .selected {
-    border-color: #4cff8f;
-    background: rgba(76, 255, 143, 0.15);
-    box-shadow: 0 0 12px rgba(76, 255, 143, 0.4);
+    opacity: 1;
+    box-shadow: 0 0 15px rgba(0,0,0,0.25);
+  }
+
+  /* Group colours */
+  .env { background: #a2c617; }
+  .inn { background: #4e0e75; }
+  .people { background: #fac800; color:#222544; }
+  .sourcing { background: #30bac7; }
+
+  /* Action buttons */
+  .button-row {
+    text-align: center;
+    margin-top: 40px;
   }
 
   button {
-    margin-top: 30px;
+    margin: 10px;
     padding: 15px 25px;
     font-size: 1.1rem;
-    background: #4cff8f;
+    background: #222544;
+    color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: 0.25s;
+    font-family: "Montserrat", sans-serif;
   }
 
   button:hover {
-    background: #34d876;
+    background: #4c4f6a;
   }
 </style>
 </head>
+
 <body>
-  <h1>2026-27 Proposal Shortlist Tool</h1>
-  <div class="container" id="app"></div>
-  <button onclick="submitShortlist()">Submit Shortlist</button>
+
+<h1>2026-27 Proposal Shortlist Tool</h1>
+<div class="subtitle">Creating a better world together</div>
+
+<div class="container" id="app"></div>
+
+<div class="button-row">
+  <button onclick="shareWhatsApp()">Share to WhatsApp</button>
+  <button onclick="shareEmail()">Share to Email</button>
+</div>
 
 <script>
 const groups = {
-  Education: [
-    "Aurora Learning Hub",
-    "BrightPath Outreach",
-    "FutureMinds Initiative",
-    "ScholarsRise Programme",
-    "LeapForward Academy"
+  ENVIRONMENT: [
+    "AFGHANISTAN: Equipping Farmers for a Sustainable Food Future",
+    "NIGERIA: Climate-Smart Sweet Potato Farming and Nutrition Education",
+    "BANGLADESH: Super Seeds for Small-Scale Farmers and Schools",
+    "BOLIVIA: Environmental Protection and Healthy Food in the Bolivian Amazon",
+    "BOLIVIA: Reinforced Sustainable Land Protection and Management"
   ],
-  Environment: [
-    "GreenPulse Energy Lab",
-    "EcoBridge Project",
-    "BlueEarth Restoration",
-    "CleanFuture Initiative",
-    "NatureNest Revive"
+  INNOVATION: [
+    "LEBANON: Feeding the Future of Farmers",
+    "BANGLADESH: Community-Led Solutions for Climate-Migrants",
+    "NIGERIA: Using Water as a Path to Peace",
+    "LIBERIA: Skills for Life and Small Business Support for Vulnerable Women",
+    "ZIMBABWE: Water and Dignity to Transform Communities"
   ],
-  Community: [
-    "CommunityConnect Hub",
-    "UnityWorks Partnership",
-    "PeopleFirst Collaboration",
-    "TogetherWeGrow",
-    "NeighbourBright Project"
+  PEOPLE: [
+    "AFGHANISTAN: Food, Health Care and Livelihoods for the Most Marginalised",
+    "BANGLADESH: Essential Aid to Rohingya Refugees",
+    "DRC: Protecting Children, Young Girls, and Women Working in Mining",
+    "ISRAEL: Building a Culture of Peace with Young People",
+    "SIERRA LEONE: Financial Empowerment for Rural Women and Youth"
   ],
-  Health: [
-    "HealthBridge Access",
-    "WellLife Network",
-    "VitalCare Initiative",
-    "MindfulSteps Programme",
-    "StrongerTomorrow Health Hub"
+  SOURCING: [
+    "GUATEMALA: Preventing Gender-Based Violence and Uplifting Dignity for Indigenous Women",
+    "EL SALVADOR: Business Skills, Sustainable Farming, and Financial Support for Women.",
+    "HONDURAS: Sugarcane Processing Plant and Training Centre for Rural Families",
+    "PERU: Family Food Security, Youth Mental Health Support, and Disaster Preparation",
+    "BRAZIL: Supporting Landless Communities to Access Land, Food, and Justice"
   ]
 };
 
@@ -114,24 +155,40 @@ function render() {
   app.innerHTML = "";
 
   for (const group in groups) {
-    const title = document.createElement("div");
-    title.className = "group-title";
-    title.textContent = group;
-    app.appendChild(title);
+    const groupTitle = document.createElement("div");
+    groupTitle.className = "group-title";
+    groupTitle.textContent = group;
+    app.appendChild(groupTitle);
 
-    groups[group].forEach((project) => {
+    let colourClass = "";
+    if (group === "ENVIRONMENT") colourClass = "env";
+    if (group === "INNOVATION") colourClass = "inn";
+    if (group === "PEOPLE") colourClass = "people";
+    if (group === "SOURCING") colourClass = "sourcing";
+
+    groups[group].forEach(proj => {
       const tile = document.createElement("div");
-      tile.className = "tile";
-      tile.textContent = project;
+      tile.className = `tile ${colourClass}`;
+      tile.textContent = proj;
 
-      if (shortlist.includes(project)) tile.classList.add("selected");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "checkbox";
+      checkbox.checked = shortlist.includes(proj);
+
+      tile.appendChild(checkbox);
+
+      if (checkbox.checked) tile.classList.add("selected");
 
       tile.onclick = () => {
-        if (shortlist.includes(project)) {
-          shortlist = shortlist.filter((x) => x !== project);
+        const isSelected = shortlist.includes(proj);
+
+        if (isSelected) {
+          shortlist = shortlist.filter(x => x !== proj);
         } else {
-          shortlist.push(project);
+          shortlist.push(proj);
         }
+
         render();
       };
 
@@ -140,31 +197,26 @@ function render() {
   }
 }
 
-function submitShortlist() {
+function shareWhatsApp() {
   if (shortlist.length === 0) {
     alert("Please select at least one project.");
     return;
   }
+  const text = encodeURIComponent(shortlist.join(", "));
+  window.open(`https://wa.me/?text=${text}`, "_blank");
+}
 
-  const message = `My shortlisted projects:\n${shortlist
-    .map((p) => "- " + p)
-    .join("\n")}`;
-
-  const encoded = encodeURIComponent(message);
-
-  // Offer user options
-  const useWhatsApp = confirm(
-    "Press OK to share via WhatsApp, or Cancel to share via Email."
-  );
-
-  if (useWhatsApp) {
-    window.open(`https://wa.me/?text=${encoded}`, "_blank");
-  } else {
-    window.location.href = `mailto:?subject=My%20Project%20Shortlist&body=${encoded}`;
+function shareEmail() {
+  if (shortlist.length === 0) {
+    alert("Please select at least one project.");
+    return;
   }
+  const body = encodeURIComponent(shortlist.map(p => "- " + p).join("\n"));
+  window.location.href = `mailto:?subject=My%20Shortlisted%20Projects&body=${body}`;
 }
 
 render();
 </script>
+
 </body>
 </html>
