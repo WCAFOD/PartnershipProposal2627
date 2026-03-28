@@ -10,20 +10,27 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
  h1{font-size:2.4rem;margin-bottom:5px;} 
  .subtitle{opacity:.8;margin-bottom:35px;}
  .container{max-width:900px;margin:auto;text-align:left;}
- .group-title{font-size:1.6rem;margin:30px 0 10px;font-weight:600;}
+ .group-header{display:flex;justify-content:space-between;align-items:center;margin-top:20px;}
+ .group-title{font-size:1.6rem;font-weight:600;}
+ .select-all{cursor:pointer;font-size:0.9rem;color:#222544;text-decoration:underline;}
 
- .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.2s;position:relative;background:rgba(0,0,0,0.1);color:black;}
- .selected{background:var(--group-color);color:white;}
+ .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.2s;position:relative;color:black;}
+ .tile.unselected{opacity:0.4;}
+ .tile.selected{opacity:1;color:white;}
 
- .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:26px;pointer-events:none;color:#222544;}
- .innovation.selected .checkbox{color:#ffffff;}
- .selected:not(.innovation) .checkbox{color:#222544;}
+ .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:26px;pointer-events:none;}
+ .innovation.selected .checkbox{color:#ffffff;} /* ESC star white too */
+ .global.selected .checkbox{color:#ffffff;}
+ .selected:not(.innovation):not(.global) .checkbox{color:#222544;}
+
+ /* Ensure selected environment, sourcing, people text is black */
+ .environment.selected, .sourcing.selected, .people.selected {color:black !important;}
 
  .button-row{text-align:center;margin-top:40px;} 
  button{margin:10px;padding:15px 25px;font-size:1.1rem;background:#222544;color:white;border:none;border-radius:10px;cursor:pointer;}
 
  #totals{text-align:center;font-size:1.3rem;margin-top:25px;font-weight:600;}
- #adminNote{font-size:0.9rem;font-style:italic;margin-top:5px;}
+ #adminNote{text-align:center;font-size:0.9rem;font-style:italic;margin-top:5px;}
 </style>
 </head>
 <body>
@@ -31,8 +38,8 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
 <div class='subtitle'>Creating a better world together</div>
 
 <div class='container' id='app'></div>
-<div id='totals'>Total Cost*: £0<br>Total Impact: 0 individuals</div>
-<div id='adminNote'><em>*includes 10% CAFOD Admin fee.</em></div>
+<div id='totals'></div>
+<div id='adminNote'></div>
 
 <div class='button-row'>
  <button onclick='resetSelection()'>Reset Selection</button>
@@ -41,6 +48,7 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
 </div>
 
 <script>
+/* FULL CORRECT PROJECT LIST */
 const groups=[
  {name:"Global",color:"#dc0014",css:"global",items:[{title:"Every Second Counts",cost:0,impact:0}]},
  {name:"Environment",color:"#a2c617",css:"environment",items:[
@@ -76,31 +84,35 @@ const groups=[
 let shortlist=[];
 
 function render(){
- const app=document.getElementById('app'); app.innerHTML="";
+ const app=document.getElementById('app');
+ app.innerHTML="";
 
  groups.forEach(g=>{
-   const gt=document.createElement('div');
-   gt.className='group-title';
-   gt.textContent=g.name;
-   app.appendChild(gt);
+   /* HEADER WITH SELECT ALL */
+   const header=document.createElement('div');
+   header.className='group-header';
+   header.innerHTML=`<div class='group-title'>${g.name}</div><div class='select-all' onclick='selectAll("${g.name}")'>Select all</div>`;
+   app.appendChild(header);
 
+   /* RENDER PROJECT TILES */
    g.items.forEach(item=>{
      const tile=document.createElement('div');
-     tile.className='tile';
+     tile.className='tile unselected';
      tile.classList.add(g.css);
      tile.style.setProperty('--group-color', g.color);
      tile.style.background=g.color+"40";
 
      const isSelected=shortlist.includes(item);
-     tile.innerHTML= item.title + `<span class='checkbox'>${isSelected ? "★" : "☆"}</span>`;
+     tile.innerHTML = item.title + `<span class='checkbox'>${isSelected?"★":"☆"}</span>`;
 
      if(isSelected){
+       tile.classList.remove('unselected');
        tile.classList.add('selected');
        tile.style.background=g.color;
      }
 
      tile.onclick = () => {
-       if(isSelected) shortlist = shortlist.filter(x => x !== item);
+       if(isSelected) shortlist = shortlist.filter(x=>x!==item);
        else shortlist.push(item);
        updateTotals(); render();
      };
@@ -110,28 +122,35 @@ function render(){
  });
 }
 
+/* SELECT ALL FOR A GROUP */
+function selectAll(groupName){
+ const group = groups.find(g=>g.name===groupName);
+ group.items.forEach(item=>{ if(!shortlist.includes(item)) shortlist.push(item); });
+ updateTotals(); render();
+}
+
+/* FIXED DONATION CALCULATION */
 function updateTotals(){
- const projectsTotal = shortlist.reduce((a,b)=>a+b.cost,0);
- const adminFee = projectsTotal * 0.10;
- const afterAdmin = projectsTotal + adminFee;
-
+ const projectTotal = shortlist.reduce((a,b)=>a+b.cost,0);
+ const adminFee = projectTotal * 0.10;
+ const afterAdmin = projectTotal + adminFee;
  const escSelected = shortlist.some(i => i.title === "Every Second Counts");
- let requiredTotalDonation = afterAdmin;
 
+ let finalTotal = afterAdmin;
  if(escSelected){
-   requiredTotalDonation = afterAdmin / 0.80;
+   finalTotal = afterAdmin / 0.70; // Correct math: projects = 70%
  }
 
  const totalImpact = shortlist.reduce((a,b)=>a+b.impact,0);
 
  document.getElementById('totals').innerHTML = `
-   Total Cost*: £${requiredTotalDonation.toLocaleString()}<br>
-   Total Impact: ${totalImpact.toLocaleString()} individuals
- `;
+   Total Cost*: £${finalTotal.toFixed(0).toLocaleString()}<br>
+   Total Impact: ${totalImpact.toLocaleString()} individuals`;
+ document.getElementById('adminNote').innerHTML = `<em>*includes 10% CAFOD Admin fee.</em>`;
 }
 
 function resetSelection(){ shortlist=[]; updateTotals(); render(); }
-function shareWhatsApp(){ if(!shortlist.length) return alert("Select at least one project."); window.open(`https://wa.me/?text=${encodeURIComponent(shortlist.map(i=>i.title).join(', '))}`,'_blank'); }
+function shareWhatsApp(){ if(!shortlist.length) return alert("Select at least one project."); window.open(`https://wa.me/?text=${encodeURIComponent(shortlist.map(i=>i.title).join(', '))}`); }
 function shareEmail(){ if(!shortlist.length) return alert("Select at least one project."); window.location.href=`mailto:?subject=My Shortlisted Projects&body=${encodeURIComponent(shortlist.map(i=>"- "+i.title).join("\n"))}`; }
 
 render(); updateTotals();
