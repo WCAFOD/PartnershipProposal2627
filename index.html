@@ -12,23 +12,20 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
  .container{max-width:900px;margin:auto;text-align:left;}
  .group-header{display:flex;justify-content:space-between;align-items:center;margin-top:20px;}
  .group-title{font-size:1.6rem;font-weight:600;}
- .select-all{cursor:pointer;font-size:0.9rem;color:#222544;text-decoration:underline;}
+ .select-all, .reset-link{cursor:pointer;font-size:0.9rem;color:#222544;text-decoration:underline;}
 
  .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.2s;position:relative;color:black;}
  .tile.unselected{opacity:0.4;}
  .tile.selected{opacity:1;color:white;}
 
  .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:26px;pointer-events:none;}
- .innovation.selected .checkbox{color:#ffffff;} /* ESC star white too */
- .global.selected .checkbox{color:#ffffff;}
+ .innovation.selected .checkbox{color:#ffffff;} /* Innovation star white */
+ .global.selected .checkbox{color:#ffffff;} /* ESC star white */
  .selected:not(.innovation):not(.global) .checkbox{color:#222544;}
 
- /* Ensure selected environment, sourcing, people text is black */
  .environment.selected, .sourcing.selected, .people.selected {color:black !important;}
 
- .button-row{text-align:center;margin-top:40px;} 
- button{margin:10px;padding:15px 25px;font-size:1.1rem;background:#222544;color:white;border:none;border-radius:10px;cursor:pointer;}
-
+ .button-row{text-align:center;margin-top:40px;}
  #totals{text-align:center;font-size:1.3rem;margin-top:25px;font-weight:600;}
  #adminNote{text-align:center;font-size:0.9rem;font-style:italic;margin-top:5px;}
 </style>
@@ -42,13 +39,14 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
 <div id='adminNote'></div>
 
 <div class='button-row'>
- <button onclick='resetSelection()'>Reset Selection</button>
  <button onclick='shareWhatsApp()'>Share to WhatsApp</button>
  <button onclick='shareEmail()'>Share to Email</button>
 </div>
+<div style='text-align:center;margin-top:10px;'>
+ <span class='reset-link' onclick='resetSelection()'>Reset selection</span>
+</div>
 
 <script>
-/* FULL CORRECT PROJECT LIST */
 const groups=[
  {name:"Global",color:"#dc0014",css:"global",items:[{title:"Every Second Counts",cost:0,impact:0}]},
  {name:"Environment",color:"#a2c617",css:"environment",items:[
@@ -84,17 +82,13 @@ const groups=[
 let shortlist=[];
 
 function render(){
- const app=document.getElementById('app');
- app.innerHTML="";
-
+ const app=document.getElementById('app'); app.innerHTML="";
  groups.forEach(g=>{
-   /* HEADER WITH SELECT ALL */
    const header=document.createElement('div');
    header.className='group-header';
    header.innerHTML=`<div class='group-title'>${g.name}</div><div class='select-all' onclick='selectAll("${g.name}")'>Select all</div>`;
    app.appendChild(header);
 
-   /* RENDER PROJECT TILES */
    g.items.forEach(item=>{
      const tile=document.createElement('div');
      tile.className='tile unselected';
@@ -103,7 +97,7 @@ function render(){
      tile.style.background=g.color+"40";
 
      const isSelected=shortlist.includes(item);
-     tile.innerHTML = item.title + `<span class='checkbox'>${isSelected?"★":"☆"}</span>`;
+     tile.innerHTML=item.title+`<span class='checkbox'>${isSelected?"★":"☆"}</span>`;
 
      if(isSelected){
        tile.classList.remove('unselected');
@@ -111,8 +105,8 @@ function render(){
        tile.style.background=g.color;
      }
 
-     tile.onclick = () => {
-       if(isSelected) shortlist = shortlist.filter(x=>x!==item);
+     tile.onclick=()=>{
+       if(isSelected) shortlist=shortlist.filter(x=>x!==item);
        else shortlist.push(item);
        updateTotals(); render();
      };
@@ -122,30 +116,31 @@ function render(){
  });
 }
 
-/* SELECT ALL FOR A GROUP */
 function selectAll(groupName){
- const group = groups.find(g=>g.name===groupName);
+ const group=groups.find(g=>g.name===groupName);
  group.items.forEach(item=>{ if(!shortlist.includes(item)) shortlist.push(item); });
  updateTotals(); render();
 }
 
-/* FIXED DONATION CALCULATION */
+/* CALCULATION FUNCTION — FULLY CORRECTED */
 function updateTotals(){
  const projectTotal = shortlist.reduce((a,b)=>a+b.cost,0);
- const adminFee = projectTotal * 0.10;
- const afterAdmin = projectTotal + adminFee;
  const escSelected = shortlist.some(i => i.title === "Every Second Counts");
+ let totalDonation = 0;
 
- let finalTotal = afterAdmin;
  if(escSelected){
-   finalTotal = afterAdmin / 0.70; // Correct math: projects = 70%
+   totalDonation = projectTotal / 0.70;
+ } else {
+   totalDonation = projectTotal * 1.10;
  }
 
  const totalImpact = shortlist.reduce((a,b)=>a+b.impact,0);
+ const formatted = Math.round(totalDonation).toLocaleString();
 
  document.getElementById('totals').innerHTML = `
-   Total Cost*: £${finalTotal.toFixed(0).toLocaleString()}<br>
-   Total Impact: ${totalImpact.toLocaleString()} individuals`;
+   Total Cost*: £${formatted}<br>
+   Lives changed: ${totalImpact.toLocaleString()}`;
+
  document.getElementById('adminNote').innerHTML = `<em>*includes 10% CAFOD Admin fee.</em>`;
 }
 
