@@ -138,10 +138,24 @@ function updateTotals(){
 function resetSelection(){ shortlist=[]; updateTotals(); render(); }
 
 /* SHARE MESSAGE */
+
 function buildShareMessage(){
- const list=shortlist.map(i=>"• "+i.title).join("%0A");
- return `My shortlisted projects for 2026-27...%0A%0A${list}`;
+  if (!shortlist.length) return "";
+
+  // Build bullet list
+  const list = shortlist
+      .map(item => "• " + item.title)
+      .join("%0A");
+
+  // Full formatted message
+  const message =
+    "My shortlisted projects for 2026-27..." +
+    "%0A%0A" + list + "%0A%0A" +
+    "Create a shortlist: https://wcafod.github.io/PartnershipProposal2627/";
+
+  return message;
 }
+
 
 function shareWhatsApp(){ if(!shortlist.length) return alert('Select at least one project.'); window.open(`https://wa.me/?text=${buildShareMessage()}`); }
 function shareEmail(){ if(!shortlist.length) return alert('Select at least one project.'); window.location.href=`mailto:?subject=My Shortlisted Projects&body=${buildShareMessage()}`; }
