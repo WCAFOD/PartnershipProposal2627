@@ -7,99 +7,175 @@
 https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap
 <style>
  body {background:white;color:#222544;font-family:Montserrat;margin:0;padding:20px;text-align:center;}
- h1{font-size:2.4rem;margin-bottom:5px;} .subtitle{opacity:.8;margin-bottom:35px;}
+ h1{font-size:2.4rem;margin-bottom:5px;} 
+ .subtitle{opacity:.8;margin-bottom:35px;}
  .container{max-width:900px;margin:auto;text-align:left;}
  .group-title{font-size:1.6rem;margin:30px 0 10px;font-weight:600;}
 
- /* Tiles */
- .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.25s;position:relative;
-       background:rgba(0,0,0,0.1);color:black;}
- .inn{color:white;} 
+ /* TILE BASE STYLE */
+ .tile{
+   padding:18px 55px 18px 18px;
+   margin:10px 0;
+   border-radius:16px;
+   cursor:pointer;
+   transition:.25s;
+   position:relative;
+   background:rgba(0,0,0,0.1); /* 40% opacity look */
+   color:black; /* readable text */
+ }
+
+ /* SELECTED STATE */
  .selected{background:var(--group-color);color:white;}
 
- /* Star icon */
- .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);
-           font-size:30px;pointer-events:none;}
- .selected .checkbox{color:#222544;}
+ /* STAR ICON */
+ .checkbox{
+   position:absolute;
+   right:15px;
+   top:50%;
+   transform:translateY(-50%);
+   font-size:30px;
+   pointer-events:none;
+   border-radius:50%;
+   color:#222544;
+ }
+ /* Innovation selected star must be white */
+ .inn.selected .checkbox{color:#ffffff;}
+ .selected:not(.inn) .checkbox{color:#222544;}
 
- /* Buttons */
+ /* BUTTONS */
  .button-row{text-align:center;margin-top:40px;} 
- button{margin:10px;padding:15px 25px;font-size:1.1rem;background:#222544;color:white;border:none;border-radius:10px;cursor:pointer;}
- #totals{text-align:center;font-size:1.3rem;margin-top:25px;font-weight:600;}
+ button{
+   margin:10px;
+   padding:15px 25px;
+   font-size:1.1rem;
+   background:#222544;
+   color:white;
+   border:none;
+   border-radius:10px;
+   cursor:pointer;
+ }
+
+ /* TOTALS ALWAYS VISIBLE */
+ #totals{
+   text-align:center;
+   font-size:1.3rem;
+   margin-top:25px;
+   font-weight:600;
+ }
+
+ /* Make stray font URL invisible */
+ .fontFix{color:white;font-size:0.01px;}
 </style>
 </head>
 <body>
 <h1>2026-27 Proposal Shortlist Tool</h1>
 <div class='subtitle'>Creating a better world together</div>
+<div class='fontFix'>https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap</div>
+
 <div class='container' id='app'></div>
-<div id='totals'></div>
+<div id='totals'>Total Cost: £0 | Total Impact: 0 individuals</div>
+
 <div class='button-row'>
  <button onclick='resetSelection()'>Reset Selection</button>
  <button onclick='shareWhatsApp()'>Share to WhatsApp</button>
  <button onclick='shareEmail()'>Share to Email</button>
 </div>
+
 <script>
+/* ✅ Country names corrected to standard casing */
 const groups=[
- {name:"GLOBAL",color:"#dc0014",items:[{title:"EVERY SECOND COUNTS",cost:0,impact:0}]},
- {name:"ENVIRONMENT",color:"#a2c617",items:[
-  {title:"AFGHANISTAN: Equipping Farmers for a Sustainable Food Future",cost:105064,impact:110},
-  {title:"BOLIVIA: Reinforced Sustainable Land Protection and Management",cost:24074,impact:370},
-  {title:"BANGLADESH: Super Seeds for Small-Scale Farmers and Schools",cost:25533,impact:2028},
-  {title:"BOLIVIA: Environmental Protection and Healthy Food in the Bolivian Amazon",cost:29630,impact:150},
-  {title:"NIGERIA: Climate-Smart Sweet Potato Farming and Nutrition Education",cost:20008,impact:1800}
+ {name:"Global",color:"#dc0014",items:[{title:"Every second counts",cost:0,impact:0}]},
+ {name:"Environment",color:"#a2c617",items:[
+  {title:"Afghanistan: Equipping farmers for a sustainable food future",cost:105064,impact:110},
+  {title:"Bolivia: Reinforced sustainable land protection and management",cost:24074,impact:370},
+  {title:"Bangladesh: Super seeds for small-scale farmers and schools",cost:25533,impact:2028},
+  {title:"Bolivia: Environmental protection and healthy food in the Bolivian Amazon",cost:29630,impact:150},
+  {title:"Nigeria: Climate-smart sweet potato farming and nutrition education",cost:20008,impact:1800}
  ]},
- {name:"INNOVATION",color:"#4e0e75",items:[
-  {title:"BANGLADESH: Community-Led Solutions for Climate-Migrants",cost:25000,impact:6440},
-  {title:"LIBERIA: Skills for Life and Small Business Support for Vulnerable Women",cost:20000,impact:65},
-  {title:"NIGERIA: Using Water as a Path to Peace",cost:21867,impact:13800},
-  {title:"ZIMBABWE: Water and Dignity to Transform Communities",cost:30000,impact:800},
-  {title:"LEBANON: Feeding the Future of Farmers",cost:40000,impact:4000}
+ {name:"Innovation",color:"#4e0e75",items:[
+  {title:"Bangladesh: Community-led solutions for climate-migrants",cost:25000,impact:6440},
+  {title:"Liberia: Skills for life and small business support for vulnerable women",cost:20000,impact:65},
+  {title:"Nigeria: Using water as a path to peace",cost:21867,impact:13800},
+  {title:"Zimbabwe: Water and dignity to transform communities",cost:30000,impact:800},
+  {title:"Lebanon: Feeding the future of farmers",cost:40000,impact:4000}
  ]},
- {name:"PEOPLE",color:"#fac800",items:[
-  {title:"BANGLADESH: Essential Aid to Rohingya Refugees",cost:57000,impact:0},
-  {title:"AFGHANISTAN: Food, Health Care and Livelihoods for the Most Marginalised",cost:17633,impact:540},
-  {title:"DRC: Protecting Children, Young Girls, and Women Working in Mining",cost:40000,impact:150},
-  {title:"ISRAEL: Building a Culture of Peace with Young People",cost:30000,impact:52},
-  {title:"SIERRA LEONE: Financial Empowerment for Rural Women and Youth",cost:21741,impact:255}
+ {name:"People",color:"#fac800",items:[
+  {title:"Bangladesh: Essential aid to Rohingya refugees",cost:57000,impact:0},
+  {title:"Afghanistan: Food, health care and livelihoods for the most marginalised",cost:17633,impact:540},
+  {title:"DRC: Protecting children, young girls, and women working in mining",cost:40000,impact:150},
+  {title:"Israel: Building a culture of peace with young people",cost:30000,impact:52},
+  {title:"Sierra Leone: Financial empowerment for rural women and youth",cost:21741,impact:255}
  ]},
- {name:"SOURCING",color:"#30bac7",items:[
-  {title:"EL SALVADOR: Business Skills, Sustainable Farming, and Financial Support for Women.",cost:21739,impact:869},
-  {title:"GUATEMALA: Preventing Gender-Based Violence and Uplifting Dignity for Indigenous Women",cost:37037,impact:390},
-  {title:"BRAZIL: Supporting Landless Communities to Access Land, Food, and Justice",cost:74000,impact:51963},
-  {title:"HONDURAS: Sugarcane Processing Plant and Training Centre for Rural Families",cost:24868,impact:350},
-  {title:"PERU: Family Food Security, Youth Mental Health Support, and Disaster Preparation",cost:34091,impact:1926}
+ {name:"Sourcing",color:"#30bac7",items:[
+  {title:"El Salvador: Business skills, sustainable farming, and financial support for women",cost:21739,impact:869},
+  {title:"Guatemala: Preventing gender-based violence and uplifting dignity for indigenous women",cost:37037,impact:390},
+  {title:"Brazil: Supporting landless communities to access land, food, and justice",cost:74000,impact:51963},
+  {title:"Honduras: Sugarcane processing plant and training centre for rural families",cost:24868,impact:350},
+  {title:"Peru: Family food security, youth mental health support, and disaster preparation",cost:34091,impact:1926}
  ]}
 ];
+
 let shortlist=[];
 
 function render(){
- const app=document.getElementById('app'); app.innerHTML="";
+ const app=document.getElementById('app'); 
+ app.innerHTML="";
+
  groups.forEach(g=>{
-  const gt=document.createElement('div'); gt.className='group-title'; gt.textContent=g.name; app.appendChild(gt);
+  const gt=document.createElement('div');
+  gt.className='group-title';
+  gt.textContent=g.name;
+  app.appendChild(gt);
+
   g.items.forEach(item=>{
-   const tile=document.createElement('div'); tile.className='tile';
+   const tile=document.createElement('div');
+   tile.className='tile';
    tile.style.setProperty('--group-color', g.color);
-   tile.style.background=`${g.color}40`; /* 40% opacity */
-   const isSelected=shortlist.includes(item);
-   tile.innerHTML=`${item.title}<span class='checkbox'>${isSelected?"★":"☆"}</span>`;
-   if(isSelected){ tile.classList.add('selected'); tile.style.background=g.color; }
-   tile.onclick=()=>{ if(isSelected) shortlist=shortlist.filter(x=>x!==item); else shortlist.push(item); updateTotals(); render(); };
+   tile.style.background = g.color + "40"; // 40% opacity
+
+   const isSelected = shortlist.includes(item);
+   tile.innerHTML = `${item.title}<span class='checkbox'>${isSelected ? "★" : "☆"}</span>`;
+
+   if(isSelected){
+      tile.classList.add('selected');
+      tile.style.background=g.color;
+   }
+
+   tile.onclick = () => {
+     if(isSelected) shortlist = shortlist.filter(x=>x!==item);
+     else shortlist.push(item);
+     updateTotals();
+     render();
+   };
+
    app.appendChild(tile);
   });
  });
 }
 
 function updateTotals(){
- let totalCost=shortlist.reduce((a,b)=>a+b.cost,0);
- let totalImpact=shortlist.reduce((a,b)=>a+b.impact,0);
- document.getElementById('totals').textContent = shortlist.length? `Total Cost: £${totalCost.toLocaleString()} | Total Impact: ${totalImpact.toLocaleString()}` : "";
+ let totalCost = shortlist.reduce((a,b)=>a+b.cost,0);
+ let totalImpact = shortlist.reduce((a,b)=>a+b.impact,0);
+ document.getElementById('totals').textContent =
+   `Total Cost: £${totalCost.toLocaleString()} | Total Impact: ${totalImpact.toLocaleString()} individuals`;
 }
 
 function resetSelection(){ shortlist=[]; updateTotals(); render(); }
-function shareWhatsApp(){ if(!shortlist.length) return alert("Select at least one project."); window.open(`https://wa.me/?text=${encodeURIComponent(shortlist.map(i=>i.title).join(', '))}`,'_blank'); }
-function shareEmail(){ if(!shortlist.length) return alert("Select at least one project."); window.location.href=`mailto:?subject=My Shortlisted Projects&body=${encodeURIComponent(shortlist.map(i=>"- "+i.title).join("\n"))}`; }
+
+function shareWhatsApp(){
+ if(!shortlist.length) return alert("Select at least one project.");
+ const text = encodeURIComponent(shortlist.map(i=>i.title).join(', '));
+ window.open(`https://wa.me/?text=${text}`,'_blank');
+}
+
+function shareEmail(){
+ if(!shortlist.length) return alert("Select at least one project.");
+ const body = encodeURIComponent(shortlist.map(i=>"- "+i.title).join("\n"));
+ window.location.href = `mailto:?subject=My Shortlisted Projects&body=${body}`;
+}
 
 render();
+updateTotals();
 </script>
 </body>
 </html>
