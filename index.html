@@ -10,24 +10,52 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
  h1{font-size:2.4rem;margin-bottom:5px;} 
  .subtitle{opacity:.8;margin-bottom:35px;}
  .container{max-width:900px;margin:auto;text-align:left;}
+
  .group-header{display:flex;justify-content:space-between;align-items:center;margin-top:20px;}
  .group-title{font-size:1.6rem;font-weight:600;}
- .select-all, .reset-link{cursor:pointer;font-size:0.9rem;color:#222544;text-decoration:underline;}
+ .select-all, .reset-link{cursor:pointer;font-size:0.9rem;color:#222544;text-decoration:underline;transition:0.2s;}
+ .select-all:hover, .reset-link:hover{opacity:0.6;}
 
- .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.2s;position:relative;color:black;}
+ .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:0.25s;position:relative;color:black;}
  .tile.unselected{opacity:0.4;}
  .tile.selected{opacity:1;color:white;}
 
  .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:26px;pointer-events:none;}
- .innovation.selected .checkbox{color:#ffffff;} /* Innovation star white */
- .global.selected .checkbox{color:#ffffff;} /* ESC star white */
+ .innovation.selected .checkbox{color:#ffffff;}
+ .global.selected .checkbox{color:#ffffff;}
  .selected:not(.innovation):not(.global) .checkbox{color:#222544;}
 
  .environment.selected, .sourcing.selected, .people.selected {color:black !important;}
 
- .button-row{text-align:center;margin-top:40px;}
+ /* BEAUTIFUL SHARE BUTTONS */
+ .button-row{margin-top:40px;display:flex;justify-content:center;gap:15px;}
+ .share-btn{
+   padding:14px 28px;
+   font-size:1.1rem;
+   border:none;
+   border-radius:50px;
+   cursor:pointer;
+   transition:0.3s;
+   font-weight:600;
+   letter-spacing:0.5px;
+ }
+ .whatsapp-btn{
+   background:#25D366;
+   color:white;
+   box-shadow:0 4px 10px rgba(0,0,0,0.15);
+ }
+ .email-btn{
+   background:#222544;
+   color:white;
+   box-shadow:0 4px 10px rgba(0,0,0,0.15);
+ }
+ .share-btn:hover{
+   transform:translateY(-3px);
+   box-shadow:0 6px 14px rgba(0,0,0,0.25);
+ }
+
  #totals{text-align:center;font-size:1.3rem;margin-top:25px;font-weight:600;}
- #adminNote{text-align:center;font-size:0.9rem;font-style:italic;margin-top:5px;}
+ #adminNote{text-align:center;font-size:0.9rem;font-style:italic;margin-top:5px;color:#444;}
 </style>
 </head>
 <body>
@@ -39,10 +67,10 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
 <div id='adminNote'></div>
 
 <div class='button-row'>
- <button onclick='shareWhatsApp()'>Share to WhatsApp</button>
- <button onclick='shareEmail()'>Share to Email</button>
+ <button class='share-btn whatsapp-btn' onclick='shareWhatsApp()'>Share to WhatsApp</button>
+ <button class='share-btn email-btn' onclick='shareEmail()'>Share to Email</button>
 </div>
-<div style='text-align:center;margin-top:10px;'>
+<div style='text-align:center;margin-top:15px;'>
  <span class='reset-link' onclick='resetSelection()'>Reset selection</span>
 </div>
 
@@ -122,25 +150,18 @@ function selectAll(groupName){
  updateTotals(); render();
 }
 
-/* CALCULATION FUNCTION — FULLY CORRECTED */
 function updateTotals(){
  const projectTotal = shortlist.reduce((a,b)=>a+b.cost,0);
  const escSelected = shortlist.some(i => i.title === "Every Second Counts");
  let totalDonation = 0;
 
- if(escSelected){
-   totalDonation = projectTotal / 0.70;
- } else {
-   totalDonation = projectTotal * 1.10;
- }
+ if(escSelected){ totalDonation = projectTotal / 0.70; }
+ else { totalDonation = projectTotal * 1.10; }
 
  const totalImpact = shortlist.reduce((a,b)=>a+b.impact,0);
  const formatted = Math.round(totalDonation).toLocaleString();
 
- document.getElementById('totals').innerHTML = `
-   Total Cost*: £${formatted}<br>
-   Lives changed: ${totalImpact.toLocaleString()}`;
-
+ document.getElementById('totals').innerHTML = `Total Cost*: £${formatted}<br>Lives changed: ${totalImpact.toLocaleString()}`;
  document.getElementById('adminNote').innerHTML = `<em>*includes 10% CAFOD Admin fee.</em>`;
 }
 
