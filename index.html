@@ -12,54 +12,17 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
  .container{max-width:900px;margin:auto;text-align:left;}
  .group-title{font-size:1.6rem;margin:30px 0 10px;font-weight:600;}
 
- /* Tile */
- .tile{
-   padding:18px 55px 18px 18px;
-   margin:10px 0;
-   border-radius:16px;
-   cursor:pointer;
-   transition:.25s;
-   position:relative;
-   background:rgba(0,0,0,0.1);
-   color:black;
- }
-
+ .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.2s;position:relative;background:rgba(0,0,0,0.1);color:black;}
  .selected{background:var(--group-color);color:white;}
 
- /* Star */
- .checkbox{
-   position:absolute;
-   right:15px;
-   top:50%;
-   transform:translateY(-50%);
-   font-size:30px;
-   pointer-events:none;
-   color:#222544;
- }
-
- /* White star ONLY for innovation */
+ .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:26px;pointer-events:none;color:#222544;}
  .innovation.selected .checkbox{color:#ffffff;}
  .selected:not(.innovation) .checkbox{color:#222544;}
 
  .button-row{text-align:center;margin-top:40px;} 
- button{
-   margin:10px;
-   padding:15px 25px;
-   font-size:1.1rem;
-   background:#222544;
-   color:white;
-   border:none;
-   border-radius:10px;
-   cursor:pointer;
- }
+ button{margin:10px;padding:15px 25px;font-size:1.1rem;background:#222544;color:white;border:none;border-radius:10px;cursor:pointer;}
 
- #totals{
-   text-align:center;
-   font-size:1.3rem;
-   margin-top:25px;
-   font-weight:600;
- }
-
+ #totals{text-align:center;font-size:1.3rem;margin-top:25px;font-weight:600;}
  #adminNote{font-size:0.9rem;font-style:italic;margin-top:5px;}
 </style>
 </head>
@@ -78,7 +41,6 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
 </div>
 
 <script>
-/* ✅ Corrected dataset */
 const groups=[
  {name:"Global",color:"#dc0014",css:"global",items:[{title:"Every Second Counts",cost:0,impact:0}]},
  {name:"Environment",color:"#a2c617",css:"environment",items:[
@@ -115,37 +77,47 @@ let shortlist=[];
 
 function render(){
  const app=document.getElementById('app'); app.innerHTML="";
+
  groups.forEach(g=>{
-   const gt=document.createElement('div'); gt.className='group-title'; gt.textContent=g.name; app.appendChild(gt);
+   const gt=document.createElement('div');
+   gt.className='group-title';
+   gt.textContent=g.name;
+   app.appendChild(gt);
+
    g.items.forEach(item=>{
-      const tile=document.createElement('div'); tile.className='tile'; tile.classList.add(g.css);
-      tile.style.setProperty('--group-color', g.color);
-      tile.style.background=g.color+"40";
+     const tile=document.createElement('div');
+     tile.className='tile';
+     tile.classList.add(g.css);
+     tile.style.setProperty('--group-color', g.color);
+     tile.style.background=g.color+"40";
 
-      const isSelected = shortlist.includes(item);
-      tile.innerHTML = `${item.title}<span class='checkbox'>${isSelected ? "★" : "☆"}</span>`;
-      if(isSelected){ tile.classList.add('selected'); tile.style.background=g.color; }
+     const isSelected=shortlist.includes(item);
+     tile.innerHTML= item.title + `<span class='checkbox'>${isSelected ? "★" : "☆"}</span>`;
 
-      tile.onclick = () => {
-        if(isSelected) shortlist = shortlist.filter(x=>x!==item);
-        else shortlist.push(item);
-        updateTotals(); render();
-      };
+     if(isSelected){
+       tile.classList.add('selected');
+       tile.style.background=g.color;
+     }
 
-      app.appendChild(tile);
+     tile.onclick = () => {
+       if(isSelected) shortlist = shortlist.filter(x => x !== item);
+       else shortlist.push(item);
+       updateTotals(); render();
+     };
+
+     app.appendChild(tile);
    });
  });
 }
 
-/* ✅ Proper donation calculation */
 function updateTotals(){
  const projectsTotal = shortlist.reduce((a,b)=>a+b.cost,0);
  const adminFee = projectsTotal * 0.10;
  const afterAdmin = projectsTotal + adminFee;
 
  const escSelected = shortlist.some(i => i.title === "Every Second Counts");
-
  let requiredTotalDonation = afterAdmin;
+
  if(escSelected){
    requiredTotalDonation = afterAdmin / 0.80;
  }
@@ -156,7 +128,6 @@ function updateTotals(){
    Total Cost*: £${requiredTotalDonation.toLocaleString()}<br>
    Total Impact: ${totalImpact.toLocaleString()} individuals
  `;
- document.getElementById('adminNote').innerHTML = `<em>*includes 10% CAFOD Admin fee.</em>`;
 }
 
 function resetSelection(){ shortlist=[]; updateTotals(); render(); }
