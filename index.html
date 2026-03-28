@@ -1,25 +1,37 @@
+<!-- ✅ COMPLETE UPDATED CODE WITH:
+    - Proper camel case for Every Second Counts
+    - ESC 20% only when ESC tile is selected
+    - Innovation stars turn white when selected
+    - Totals always visible
+-->
 <!DOCTYPE html>
 <html lang='en'>
 <head>
 <meta charset='UTF-8' />
 <meta name='viewport' content='width=device-width, initial-scale=1' />
 <title>2026-27 Proposal Shortlist Tool</title>
-https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap
 <style>
  body {background:white;color:#222544;font-family:Montserrat;margin:0;padding:20px;text-align:center;}
  h1{font-size:2.4rem;margin-bottom:5px;} 
  .subtitle{opacity:.8;margin-bottom:35px;}
  .container{max-width:900px;margin:auto;text-align:left;}
  .group-title{font-size:1.6rem;margin:30px 0 10px;font-weight:600;}
+
+ /* Tile */
  .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.25s;position:relative;background:rgba(0,0,0,0.1);color:black;}
  .selected{background:var(--group-color);color:white;}
- .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:30px;pointer-events:none;border-radius:50%;color:#222544;}
- .inn.selected .checkbox{color:#ffffff;}
+
+ /* Star */
+ .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:30px;pointer-events:none;color:#222544;}
+ .inn.selected .checkbox{color:#ffffff;} /* Innovation white star */
  .selected:not(.inn) .checkbox{color:#222544;}
+
  .button-row{text-align:center;margin-top:40px;} 
  button{margin:10px;padding:15px 25px;font-size:1.1rem;background:#222544;color:white;border:none;border-radius:10px;cursor:pointer;}
+
  #totals{text-align:center;font-size:1.3rem;margin-top:25px;font-weight:600;}
  #adminNote{font-size:0.9rem;font-style:italic;margin-top:5px;}
+
  .fontFix{color:white;font-size:0.01px;}
 </style>
 </head>
@@ -29,8 +41,8 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
 <div class='fontFix'>https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap</div>
 
 <div class='container' id='app'></div>
-<div id='totals'></div>
-<div id='adminNote'></div>
+<div id='totals'>Total Cost*: £0<br>Total Impact: 0 individuals</div>
+<div id='adminNote'><em>*includes 10% CAFOD Admin fee.</em></div>
 
 <div class='button-row'>
  <button onclick='resetSelection()'>Reset Selection</button>
@@ -39,9 +51,9 @@ https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display
 </div>
 
 <script>
-/* GROUP + PROJECT DATA */
+/* ✅ Updated project list with camel case */
 const groups=[
- {name:"Global",color:"#dc0014",items:[{title:"Every second counts",cost:0,impact:0}]},
+ {name:"Global",color:"#dc0014",items:[{title:"Every Second Counts",cost:0,impact:0}]},
  {name:"Environment",color:"#a2c617",items:[
   {title:"Afghanistan: Equipping farmers for a sustainable food future",cost:105064,impact:110},
   {title:"Bolivia: Reinforced sustainable land protection and management",cost:24074,impact:370},
@@ -74,42 +86,46 @@ const groups=[
 
 let shortlist=[];
 
-/* RENDER TILES */
 function render(){
  const app=document.getElementById('app'); app.innerHTML="";
  groups.forEach(g=>{
    const gt=document.createElement('div'); gt.className='group-title'; gt.textContent=g.name; app.appendChild(gt);
    g.items.forEach(item=>{
-      const tile=document.createElement('div');
-      tile.className='tile'; tile.style.setProperty('--group-color', g.color);
-      tile.style.background=g.color+"40"; /* 40% opacity */
+      const tile=document.createElement('div'); tile.className='tile'; tile.classList.add(g.name==="Innovation"?"inn":"");
+      tile.style.setProperty('--group-color', g.color);
+      tile.style.background=g.color+"40";
+
       const isSelected=shortlist.includes(item);
       tile.innerHTML=`${item.title}<span class='checkbox'>${isSelected?"★":"☆"}</span>`;
       if(isSelected){ tile.classList.add('selected'); tile.style.background=g.color; }
-      tile.onclick=()=>{ if(isSelected) shortlist=shortlist.filter(x=>x!==item); else shortlist.push(item); updateTotals(); render(); };
+
+      tile.onclick=()=>{
+         if(isSelected) shortlist=shortlist.filter(x=>x!==item);
+         else shortlist.push(item);
+         updateTotals(); render();
+      };
+
       app.appendChild(tile);
    });
  });
 }
 
-/* DONATION + ADMIN FEE + GLOBAL 20% */
+/* ✅ ESC 20% only when ESC is selected */
 function updateTotals(){
- // Total of selected projects
  const projectsTotal = shortlist.reduce((a,b)=>a+b.cost,0);
-
- // Add 10% admin fee
  const adminFee = projectsTotal * 0.10;
-
- // Total after admin
  const afterAdmin = projectsTotal + adminFee;
 
- // Global 20% rule: total donation must be such that Global=20% of total
- const requiredTotalDonation = afterAdmin / 0.80;
+ const escSelected = shortlist.some(i => i.title === "Every Second Counts");
 
- // Required amount for ESC
- const escAmount = requiredTotalDonation * 0.20;
+ let requiredTotalDonation = afterAdmin;
+ let escAmount = 0;
 
- // Total impact
+ if(escSelected){
+   requiredTotalDonation = afterAdmin / 0.80;
+   escAmount = requiredTotalDonation * 0.20;
+ }
+
  const totalImpact = shortlist.reduce((a,b)=>a+b.impact,0);
 
  document.getElementById('totals').innerHTML = `
@@ -117,18 +133,14 @@ function updateTotals(){
    Total Impact: ${totalImpact.toLocaleString()} individuals
  `;
 
- document.getElementById('adminNote').innerHTML = `
-   <em>*includes 10% CAFOD Admin fee.</em>
- `;
+ document.getElementById('adminNote').innerHTML = `<em>*includes 10% CAFOD Admin fee.</em>`;
 }
 
 function resetSelection(){ shortlist=[]; updateTotals(); render(); }
+function shareWhatsApp(){ if(!shortlist.length) return alert("Select at least one project."); window.open(`https://wa.me/?text=${encodeURIComponent(shortlist.map(i=>i.title).join(', '))}`,'_blank'); }
+function shareEmail(){ if(!shortlist.length) return alert("Select at least one project."); window.location.href=`mailto:?subject=My Shortlisted Projects&body=${encodeURIComponent(shortlist.map(i=>"- "+i.title).join("\n"))}`; }
 
-function shareWhatsApp(){ if(!shortlist.length) return alert("Select at least one project."); const text=encodeURIComponent(shortlist.map(i=>i.title).join(', ')); window.open(`https://wa.me/?text=${text}`,'_blank'); }
-function shareEmail(){ if(!shortlist.length) return alert("Select at least one project."); const body=encodeURIComponent(shortlist.map(i=>"- "+i.title).join("\n")); window.location.href=`mailto:?subject=My Shortlisted Projects&body=${body}`; }
-
-render();
-updateTotals();
+render(); updateTotals();
 </script>
 </body>
 </html>
