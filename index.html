@@ -1,15 +1,10 @@
-<!-- ✅ COMPLETE UPDATED CODE WITH:
-    - Proper camel case for Every Second Counts
-    - ESC 20% only when ESC tile is selected
-    - Innovation stars turn white when selected
-    - Totals always visible
--->
 <!DOCTYPE html>
 <html lang='en'>
 <head>
 <meta charset='UTF-8' />
 <meta name='viewport' content='width=device-width, initial-scale=1' />
 <title>2026-27 Proposal Shortlist Tool</title>
+https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap
 <style>
  body {background:white;color:#222544;font-family:Montserrat;margin:0;padding:20px;text-align:center;}
  h1{font-size:2.4rem;margin-bottom:5px;} 
@@ -18,27 +13,59 @@
  .group-title{font-size:1.6rem;margin:30px 0 10px;font-weight:600;}
 
  /* Tile */
- .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.25s;position:relative;background:rgba(0,0,0,0.1);color:black;}
+ .tile{
+   padding:18px 55px 18px 18px;
+   margin:10px 0;
+   border-radius:16px;
+   cursor:pointer;
+   transition:.25s;
+   position:relative;
+   background:rgba(0,0,0,0.1);
+   color:black;
+ }
+
  .selected{background:var(--group-color);color:white;}
 
  /* Star */
- .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:30px;pointer-events:none;color:#222544;}
- .inn.selected .checkbox{color:#ffffff;} /* Innovation white star */
- .selected:not(.inn) .checkbox{color:#222544;}
+ .checkbox{
+   position:absolute;
+   right:15px;
+   top:50%;
+   transform:translateY(-50%);
+   font-size:30px;
+   pointer-events:none;
+   color:#222544;
+ }
+
+ /* White star ONLY for innovation */
+ .innovation.selected .checkbox{color:#ffffff;}
+ .selected:not(.innovation) .checkbox{color:#222544;}
 
  .button-row{text-align:center;margin-top:40px;} 
- button{margin:10px;padding:15px 25px;font-size:1.1rem;background:#222544;color:white;border:none;border-radius:10px;cursor:pointer;}
+ button{
+   margin:10px;
+   padding:15px 25px;
+   font-size:1.1rem;
+   background:#222544;
+   color:white;
+   border:none;
+   border-radius:10px;
+   cursor:pointer;
+ }
 
- #totals{text-align:center;font-size:1.3rem;margin-top:25px;font-weight:600;}
+ #totals{
+   text-align:center;
+   font-size:1.3rem;
+   margin-top:25px;
+   font-weight:600;
+ }
+
  #adminNote{font-size:0.9rem;font-style:italic;margin-top:5px;}
-
- .fontFix{color:white;font-size:0.01px;}
 </style>
 </head>
 <body>
 <h1>2026-27 Proposal Shortlist Tool</h1>
 <div class='subtitle'>Creating a better world together</div>
-<div class='fontFix'>https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap</div>
 
 <div class='container' id='app'></div>
 <div id='totals'>Total Cost*: £0<br>Total Impact: 0 individuals</div>
@@ -51,31 +78,31 @@
 </div>
 
 <script>
-/* ✅ Updated project list with camel case */
+/* ✅ Corrected dataset */
 const groups=[
- {name:"Global",color:"#dc0014",items:[{title:"Every Second Counts",cost:0,impact:0}]},
- {name:"Environment",color:"#a2c617",items:[
+ {name:"Global",color:"#dc0014",css:"global",items:[{title:"Every Second Counts",cost:0,impact:0}]},
+ {name:"Environment",color:"#a2c617",css:"environment",items:[
   {title:"Afghanistan: Equipping farmers for a sustainable food future",cost:105064,impact:110},
   {title:"Bolivia: Reinforced sustainable land protection and management",cost:24074,impact:370},
   {title:"Bangladesh: Super seeds for small-scale farmers and schools",cost:25533,impact:2028},
   {title:"Bolivia: Environmental protection and healthy food in the Bolivian Amazon",cost:29630,impact:150},
   {title:"Nigeria: Climate-smart sweet potato farming and nutrition education",cost:20008,impact:1800}
  ]},
- {name:"Innovation",color:"#4e0e75",items:[
+ {name:"Innovation",color:"#4e0e75",css:"innovation",items:[
   {title:"Bangladesh: Community-led solutions for climate-migrants",cost:25000,impact:6440},
   {title:"Liberia: Skills for life and small business support for vulnerable women",cost:20000,impact:65},
   {title:"Nigeria: Using water as a path to peace",cost:21867,impact:13800},
   {title:"Zimbabwe: Water and dignity to transform communities",cost:30000,impact:800},
   {title:"Lebanon: Feeding the future of farmers",cost:40000,impact:4000}
  ]},
- {name:"People",color:"#fac800",items:[
+ {name:"People",color:"#fac800",css:"people",items:[
   {title:"Bangladesh: Essential aid to Rohingya refugees",cost:57000,impact:0},
   {title:"Afghanistan: Food, health care and livelihoods for the most marginalised",cost:17633,impact:540},
   {title:"DRC: Protecting children, young girls, and women working in mining",cost:40000,impact:150},
   {title:"Israel: Building a culture of peace with young people",cost:30000,impact:52},
   {title:"Sierra Leone: Financial empowerment for rural women and youth",cost:21741,impact:255}
  ]},
- {name:"Sourcing",color:"#30bac7",items:[
+ {name:"Sourcing",color:"#30bac7",css:"sourcing",items:[
   {title:"El Salvador: Business skills, sustainable farming, and financial support for women",cost:21739,impact:869},
   {title:"Guatemala: Preventing gender-based violence and uplifting dignity for indigenous women",cost:37037,impact:390},
   {title:"Brazil: Supporting landless communities to access land, food, and justice",cost:74000,impact:51963},
@@ -91,18 +118,18 @@ function render(){
  groups.forEach(g=>{
    const gt=document.createElement('div'); gt.className='group-title'; gt.textContent=g.name; app.appendChild(gt);
    g.items.forEach(item=>{
-      const tile=document.createElement('div'); tile.className='tile'; tile.classList.add(g.name==="Innovation"?"inn":"");
+      const tile=document.createElement('div'); tile.className='tile'; tile.classList.add(g.css);
       tile.style.setProperty('--group-color', g.color);
       tile.style.background=g.color+"40";
 
-      const isSelected=shortlist.includes(item);
-      tile.innerHTML=`${item.title}<span class='checkbox'>${isSelected?"★":"☆"}</span>`;
+      const isSelected = shortlist.includes(item);
+      tile.innerHTML = `${item.title}<span class='checkbox'>${isSelected ? "★" : "☆"}</span>`;
       if(isSelected){ tile.classList.add('selected'); tile.style.background=g.color; }
 
-      tile.onclick=()=>{
-         if(isSelected) shortlist=shortlist.filter(x=>x!==item);
-         else shortlist.push(item);
-         updateTotals(); render();
+      tile.onclick = () => {
+        if(isSelected) shortlist = shortlist.filter(x=>x!==item);
+        else shortlist.push(item);
+        updateTotals(); render();
       };
 
       app.appendChild(tile);
@@ -110,7 +137,7 @@ function render(){
  });
 }
 
-/* ✅ ESC 20% only when ESC is selected */
+/* ✅ Proper donation calculation */
 function updateTotals(){
  const projectsTotal = shortlist.reduce((a,b)=>a+b.cost,0);
  const adminFee = projectsTotal * 0.10;
@@ -119,11 +146,8 @@ function updateTotals(){
  const escSelected = shortlist.some(i => i.title === "Every Second Counts");
 
  let requiredTotalDonation = afterAdmin;
- let escAmount = 0;
-
  if(escSelected){
    requiredTotalDonation = afterAdmin / 0.80;
-   escAmount = requiredTotalDonation * 0.20;
  }
 
  const totalImpact = shortlist.reduce((a,b)=>a+b.impact,0);
@@ -132,7 +156,6 @@ function updateTotals(){
    Total Cost*: £${requiredTotalDonation.toLocaleString()}<br>
    Total Impact: ${totalImpact.toLocaleString()} individuals
  `;
-
  document.getElementById('adminNote').innerHTML = `<em>*includes 10% CAFOD Admin fee.</em>`;
 }
 
