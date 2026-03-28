@@ -4,8 +4,7 @@
 <meta charset='UTF-8'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'/>
 <title>2026-27 Proposal Shortlist Tool</title>
-https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap
-
+<link href='https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap' rel='stylesheet'>
 <style>
  body{background:white;color:#222544;font-family:Montserrat;margin:0;padding:20px;text-align:center;}
  h1{font-size:2.4rem;margin-bottom:5px;} .subtitle{opacity:.8;margin-bottom:35px;}
@@ -133,7 +132,7 @@ function updateTotals(){
  const totalDonation=escSelected? projectTotal/0.70 : projectTotal*1.10;
  const totalImpact=shortlist.reduce((a,b)=>a+b.impact,0);
  document.getElementById('totals').innerHTML=`Total Cost*: £${Math.round(totalDonation).toLocaleString()}<br>Lives changed: ${totalImpact.toLocaleString()}`;
- document.getElementById('adminNote').innerHTML='<em>*includes 10% CAFOD Admin fee.</em>';
+ document.getElementById('adminNote').innerHTML='<em>*includes 10% Admin fee.</em>';
 }
 
 function resetSelection(){ shortlist=[]; updateTotals(); render(); }
