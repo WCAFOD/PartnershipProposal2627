@@ -4,220 +4,99 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>2026-27 Proposal Shortlist Tool</title>
-
-<!-- Google Font: Montserrat -->
 https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap
-
 <style>
-  body {
-    background: #ffffff;
-    color: #222544;
-    font-family: "Montserrat", sans-serif;
-    margin: 0;
-    padding: 20px;
-    text-align: center;
-  }
-
-  h1 {
-    font-size: 2.4rem;
-    margin-bottom: 5px;
-  }
-
-  .subtitle {
-    font-size: 1.1rem;
-    margin-bottom: 35px;
-    opacity: 0.8;
-  }
-
-  .container {
-    max-width: 900px;
-    margin: auto;
-    text-align: left;
-  }
-
-  .group-title {
-    font-size: 1.6rem;
-    margin: 30px 0 10px;
-    font-weight: 600;
-  }
-
-  /* Base tile style */
-  .tile {
-    padding: 18px 55px 18px 18px;
-    margin: 10px 0;
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    position: relative;
-    opacity: 0.4; /* 40% transparent when unselected */
-    color: white; /* keep text fully visible */
-    backdrop-filter: blur(6px);
-  }
-
-  .tile:hover {
-    transform: scale(1.015);
-  }
-
-  /* Checkbox style */
-  .checkbox {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%) scale(1.6);
-    accent-color: white;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    cursor: pointer;
-    pointer-events: none; /* so clicks hit tile */
-  }
-
-  /* Selected state */
-  .selected {
-    opacity: 1;
-    box-shadow: 0 0 15px rgba(0,0,0,0.25);
-  }
-
-  /* Group colours */
-  .env { background: #a2c617; }
-  .inn { background: #4e0e75; }
-  .people { background: #fac800; color:#222544; }
-  .sourcing { background: #30bac7; }
-
-  .button-row {
-    text-align: center;
-    margin-top: 40px;
-  }
-
-  button {
-    margin: 10px;
-    padding: 15px 25px;
-    font-size: 1.1rem;
-    background: #222544;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.25s;
-    font-family: "Montserrat", sans-serif;
-  }
-
-  button:hover {
-    background: #4c4f6a;
-  }
+ body {background:white;color:#222544;font-family:Montserrat;margin:0;padding:20px;text-align:center;}
+ h1{font-size:2.4rem;margin-bottom:5px;} .subtitle{opacity:.8;margin-bottom:35px;}
+ .container{max-width:900px;margin:auto;text-align:left;}
+ .group-title{font-size:1.6rem;margin:30px 0 10px;font-weight:600;}
+ .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.25s;position:relative;background:rgba(255,255,255,0.4);color:black;}
+ .inn{color:white;} .selected{background:currentColor;color:white;}
+ .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:26px;pointer-events:none;}
+ .env{color:#a2c617;} .people{color:#fac800;} .sourcing{color:#30bac7;} .global{color:#dc0014;}
+ .button-row{text-align:center;margin-top:40px;} button{margin:10px;padding:15px 25px;font-size:1.1rem;background:#222544;color:white;border:none;border-radius:10px;cursor:pointer;}
+ #totals{text-align:center;font-size:1.3rem;margin-top:25px;font-weight:600;}
 </style>
 </head>
-
 <body>
-
 <h1>2026-27 Proposal Shortlist Tool</h1>
 <div class="subtitle">Creating a better world together</div>
-
 <div class="container" id="app"></div>
-
+<div id="totals"></div>
 <div class="button-row">
-  <button onclick="shareWhatsApp()">Share to WhatsApp</button>
-  <button onclick="shareEmail()">Share to Email</button>
+ <button onclick="shareWhatsApp()">Share to WhatsApp</button>
+ <button onclick="shareEmail()">Share to Email</button>
 </div>
-
 <script>
-const groups = {
-  ENVIRONMENT: [
-    "AFGHANISTAN: Equipping Farmers for a Sustainable Food Future",
-    "NIGERIA: Climate-Smart Sweet Potato Farming and Nutrition Education",
-    "BANGLADESH: Super Seeds for Small-Scale Farmers and Schools",
-    "BOLIVIA: Environmental Protection and Healthy Food in the Bolivian Amazon",
-    "BOLIVIA: Reinforced Sustainable Land Protection and Management"
-  ],
-  INNOVATION: [
-    "LEBANON: Feeding the Future of Farmers",
-    "BANGLADESH: Community-Led Solutions for Climate-Migrants",
-    "NIGERIA: Using Water as a Path to Peace",
-    "LIBERIA: Skills for Life and Small Business Support for Vulnerable Women",
-    "ZIMBABWE: Water and Dignity to Transform Communities"
-  ],
-  PEOPLE: [
-    "AFGHANISTAN: Food, Health Care and Livelihoods for the Most Marginalised",
-    "BANGLADESH: Essential Aid to Rohingya Refugees",
-    "DRC: Protecting Children, Young Girls, and Women Working in Mining",
-    "ISRAEL: Building a Culture of Peace with Young People",
-    "SIERRA LEONE: Financial Empowerment for Rural Women and Youth"
-  ],
-  SOURCING: [
-    "GUATEMALA: Preventing Gender-Based Violence and Uplifting Dignity for Indigenous Women",
-    "EL SALVADOR: Business Skills, Sustainable Farming, and Financial Support for Women.",
-    "HONDURAS: Sugarcane Processing Plant and Training Centre for Rural Families",
-    "PERU: Family Food Security, Youth Mental Health Support, and Disaster Preparation",
-    "BRAZIL: Supporting Landless Communities to Access Land, Food, and Justice"
-  ]
-};
+const groups=[
+ {name:"GLOBAL",color:"global",items:[{title:"EVERY SECOND COUNTS",cost:0,impact:0}]},
+ {name:"ENVIRONMENT",color:"env",items:[
+  {title:"AFGHANISTAN: Equipping Farmers for a Sustainable Food Future",cost:105064,impact:110},
+  {title:"BOLIVIA: Reinforced Sustainable Land Protection and Management",cost:24074,impact:370},
+  {title:"BANGLADESH: Super Seeds for Small-Scale Farmers and Schools",cost:25533,impact:2028},
+  {title:"BOLIVIA: Environmental Protection and Healthy Food in the Bolivian Amazon",cost:29630,impact:150},
+  {title:"NIGERIA: Climate-Smart Sweet Potato Farming and Nutrition Education",cost:20008,impact:1800}
+ ]},
+ {name:"INNOVATION",color:"inn",items:[
+  {title:"BANGLADESH: Community-Led Solutions for Climate-Migrants",cost:25000,impact:6440},
+  {title:"LIBERIA: Skills for Life and Small Business Support for Vulnerable Women",cost:20000,impact:65},
+  {title:"NIGERIA: Using Water as a Path to Peace",cost:21867,impact:13800},
+  {title:"ZIMBABWE: Water and Dignity to Transform Communities",cost:30000,impact:800},
+  {title:"LEBANON: Feeding the Future of Farmers",cost:40000,impact:4000}
+ ]},
+ {name:"PEOPLE",color:"people",items:[
+  {title:"BANGLADESH: Essential Aid to Rohingya Refugees",cost:57000,impact:0},
+  {title:"AFGHANISTAN: Food, Health Care and Livelihoods for the Most Marginalised",cost:17633,impact:540},
+  {title:"DRC: Protecting Children, Young Girls, and Women Working in Mining",cost:40000,impact:150},
+  {title:"ISRAEL: Building a Culture of Peace with Young People",cost:30000,impact:52},
+  {title:"SIERRA LEONE: Financial Empowerment for Rural Women and Youth",cost:21741,impact:255}
+ ]},
+ {name:"SOURCING",color:"sourcing",items:[
+  {title:"EL SALVADOR: Business Skills, Sustainable Farming, and Financial Support for Women.",cost:21739,impact:869},
+  {title:"GUATEMALA: Preventing Gender-Based Violence and Uplifting Dignity for Indigenous Women",cost:37037,impact:390},
+  {title:"BRAZIL: Supporting Landless Communities to Access Land, Food, and Justice",cost:74000,impact:51963},
+  {title:"HONDURAS: Sugarcane Processing Plant and Training Centre for Rural Families",cost:24868,impact:350},
+  {title:"PERU: Family Food Security, Youth Mental Health Support, and Disaster Preparation",cost:34091,impact:1926}
+ ]}
+];
+let shortlist=[];
 
-let shortlist = [];
-
-function render() {
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  for (const group in groups) {
-    const title = document.createElement("div");
-    title.className = "group-title";
-    title.textContent = group;
-    app.appendChild(title);
-
-    let colourClass = "";
-    if (group === "ENVIRONMENT") colourClass = "env";
-    if (group === "INNOVATION") colourClass = "inn";
-    if (group === "PEOPLE") colourClass = "people";
-    if (group === "SOURCING") colourClass = "sourcing";
-
-    groups[group].forEach(project => {
-      const tile = document.createElement("div");
-      tile.className = `tile ${colourClass}`;
-      tile.textContent = project;
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.className = "checkbox";
-      checkbox.checked = shortlist.includes(project);
-      tile.appendChild(checkbox);
-
-      if (checkbox.checked) tile.classList.add("selected");
-
-      tile.onclick = () => {
-        const isSelected = shortlist.includes(project);
-        if (isSelected) {
-          shortlist = shortlist.filter(x => x !== project);
-        } else {
-          shortlist.push(project);
-        }
-        render();
-      };
-
-      app.appendChild(tile);
-    });
-  }
+function render(){
+ const app=document.getElementById("app"); app.innerHTML="";
+ groups.forEach(g=>{
+  const gt=document.createElement("div"); gt.className="group-title"; gt.textContent=g.name; app.appendChild(gt);
+  g.items.forEach(item=>{
+   const tile=document.createElement("div"); tile.className=`tile ${g.color}`;
+   tile.innerHTML=`${item.title}<span class='checkbox'>${shortlist.includes(item)?"★":"☆"}</span>`;
+   if(shortlist.includes(item)) tile.classList.add("selected");
+   tile.onclick=()=>{
+    if(shortlist.includes(item)) shortlist=shortlist.filter(x=>x!==item); else shortlist.push(item);
+    updateTotals(); render();
+   };
+   app.appendChild(tile);
+  });
+ });
 }
 
-function shareWhatsApp() {
-  if (shortlist.length === 0) {
-    alert("Please select at least one project.");
-    return;
-  }
-  const text = encodeURIComponent(shortlist.join(", "));
-  window.open(`https://wa.me/?text=${text}`, "_blank");
+function updateTotals(){
+ let totalCost=shortlist.reduce((a,b)=>a+b.cost,0);
+ let totalImpact=shortlist.reduce((a,b)=>a+b.impact,0);
+ document.getElementById("totals").textContent = shortlist.length?`Total Cost: £${totalCost.toLocaleString()} | Total Impact: ${totalImpact.toLocaleString()}`:"";
 }
 
-function shareEmail() {
-  if (shortlist.length === 0) {
-    alert("Please select at least one project.");
-    return;
-  }
-  const body = encodeURIComponent(shortlist.map(p => "- " + p).join("\n"));
-  window.location.href = `mailto:?subject=My%20Shortlisted%20Projects&body=${body}`;
+function shareWhatsApp(){
+ if(!shortlist.length) return alert("Please select at least one project.");
+ const text=encodeURIComponent(shortlist.map(i=>i.title).join(", "));
+ window.open(`https://wa.me/?text=${text}`,'_blank');
+}
+
+function shareEmail(){
+ if(!shortlist.length) return alert("Please select at least one project.");
+ const body=encodeURIComponent(shortlist.map(i=>"- "+i.title).join("\n"));
+ window.location.href=`mailto:?subject=My%20Shortlisted%20Projects&body=${body}`;
 }
 
 render();
 </script>
-
 </body>
 </html>
