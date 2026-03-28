@@ -4,7 +4,8 @@
 <meta charset='UTF-8'/>
 <meta name='viewport' content='width=device-width, initial-scale=1'/>
 <title>2026-27 Proposal Shortlist Tool</title>
-<link href='https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap' rel='stylesheet'>
+https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap
+
 <style>
  body{background:white;color:#222544;font-family:Montserrat;margin:0;padding:20px;text-align:center;}
  h1{font-size:2.4rem;margin-bottom:5px;} .subtitle{opacity:.8;margin-bottom:35px;}
@@ -14,13 +15,18 @@
  .select-all,.reset-link{cursor:pointer;font-size:.9rem;color:#222544;text-decoration:underline;transition:.2s;}
  .select-all:hover,.reset-link:hover{opacity:.6;}
 
+ /* TILES */
  .tile{padding:18px 55px 18px 18px;margin:10px 0;border-radius:16px;cursor:pointer;transition:.25s;position:relative;color:black;}
- .tile.unselected{opacity:0.4;} .tile.selected{opacity:1;color:white;}
+ /* REMOVE 40% OPACITY — make unselected tiles solid */
+ .tile.unselected{opacity:1;}
+ .tile.selected{color:white;}
+
  .checkbox{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:26px;pointer-events:none;}
- .innovation.selected .checkbox,.global.selected .checkbox{color:#ffffff;} /* No emoji comment */
+ .innovation.selected .checkbox,.global.selected .checkbox{color:#ffffff;}
  .selected:not(.innovation):not(.global) .checkbox{color:#222544;}
  .environment.selected,.sourcing.selected,.people.selected{color:black!important;}
 
+ /* SHARE BUTTONS */
  .button-row{margin-top:40px;display:flex;justify-content:center;gap:15px;}
  .share-btn{padding:14px 28px;font-size:1.1rem;border:none;border-radius:50px;cursor:pointer;transition:0.3s;font-weight:600;letter-spacing:.5px;}
  .whatsapp-btn{background:#25D366;color:white;box-shadow:0 4px 10px rgba(0,0,0,0.15);} 
@@ -122,31 +128,24 @@ function selectAll(groupName){
 
 /* DONATION CALCULATION */
 function updateTotals(){
- const projectTotal = shortlist.reduce((a,b)=>a+b.cost,0);
- const escSelected = shortlist.some(i=>i.title==="Every Second Counts");
- const totalDonation = escSelected ? projectTotal/0.70 : projectTotal*1.10;
- const totalImpact = shortlist.reduce((a,b)=>a+b.impact,0);
+ const projectTotal=shortlist.reduce((a,b)=>a+b.cost,0);
+ const escSelected=shortlist.some(i=>i.title==="Every Second Counts");
+ const totalDonation=escSelected? projectTotal/0.70 : projectTotal*1.10;
+ const totalImpact=shortlist.reduce((a,b)=>a+b.impact,0);
  document.getElementById('totals').innerHTML=`Total Cost*: £${Math.round(totalDonation).toLocaleString()}<br>Lives changed: ${totalImpact.toLocaleString()}`;
- document.getElementById('adminNote').innerHTML='<em>*includes 10% Admin fee.</em>';
+ document.getElementById('adminNote').innerHTML='<em>*includes 10% CAFOD Admin fee.</em>';
 }
 
 function resetSelection(){ shortlist=[]; updateTotals(); render(); }
 
-/* SHARE FORMATTING */
+/* SHARE MESSAGE */
 function buildShareMessage(){
- const list = shortlist.map(i=>"• "+i.title).join("%0A");
+ const list=shortlist.map(i=>"• "+i.title).join("%0A");
  return `My shortlisted projects for 2026-27...%0A%0A${list}`;
 }
 
-function shareWhatsApp(){
- if(!shortlist.length) return alert('Select at least one project.');
- window.open(`https://wa.me/?text=${buildShareMessage()}`);
-}
-
-function shareEmail(){
- if(!shortlist.length) return alert('Select at least one project.');
- window.location.href=`mailto:?subject=My Shortlisted Projects&body=${buildShareMessage()}`;
-}
+function shareWhatsApp(){ if(!shortlist.length) return alert('Select at least one project.'); window.open(`https://wa.me/?text=${buildShareMessage()}`); }
+function shareEmail(){ if(!shortlist.length) return alert('Select at least one project.'); window.location.href=`mailto:?subject=My Shortlisted Projects&body=${buildShareMessage()}`; }
 
 render(); updateTotals();
 </script>
