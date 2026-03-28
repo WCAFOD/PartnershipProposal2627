@@ -6,7 +6,7 @@
 <title>2026-27 Proposal Shortlist Tool</title>
 
 <!-- Google Font: Montserrat -->
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap
 
 <style>
   body {
@@ -43,14 +43,14 @@
 
   /* Base tile style */
   .tile {
-    padding: 18px 18px 18px 55px;
+    padding: 18px 55px 18px 18px;
     margin: 10px 0;
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.25s ease;
     position: relative;
-    opacity: 0.4; /* 40% opacity default */
-    color: white;
+    opacity: 0.4; /* 40% transparent when unselected */
+    color: white; /* keep text fully visible */
     backdrop-filter: blur(6px);
   }
 
@@ -58,13 +58,18 @@
     transform: scale(1.015);
   }
 
-  /* Checkbox styling */
+  /* Checkbox style */
   .checkbox {
     position: absolute;
-    left: 18px;
+    right: 15px;
     top: 50%;
-    transform: translateY(-50%) scale(1.4);
-    pointer-events: none;
+    transform: translateY(-50%) scale(1.6);
+    accent-color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: none; /* so clicks hit tile */
   }
 
   /* Selected state */
@@ -79,7 +84,6 @@
   .people { background: #fac800; color:#222544; }
   .sourcing { background: #30bac7; }
 
-  /* Action buttons */
   .button-row {
     text-align: center;
     margin-top: 40px;
@@ -155,10 +159,10 @@ function render() {
   app.innerHTML = "";
 
   for (const group in groups) {
-    const groupTitle = document.createElement("div");
-    groupTitle.className = "group-title";
-    groupTitle.textContent = group;
-    app.appendChild(groupTitle);
+    const title = document.createElement("div");
+    title.className = "group-title";
+    title.textContent = group;
+    app.appendChild(title);
 
     let colourClass = "";
     if (group === "ENVIRONMENT") colourClass = "env";
@@ -166,29 +170,26 @@ function render() {
     if (group === "PEOPLE") colourClass = "people";
     if (group === "SOURCING") colourClass = "sourcing";
 
-    groups[group].forEach(proj => {
+    groups[group].forEach(project => {
       const tile = document.createElement("div");
       tile.className = `tile ${colourClass}`;
-      tile.textContent = proj;
+      tile.textContent = project;
 
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.className = "checkbox";
-      checkbox.checked = shortlist.includes(proj);
-
+      checkbox.checked = shortlist.includes(project);
       tile.appendChild(checkbox);
 
       if (checkbox.checked) tile.classList.add("selected");
 
       tile.onclick = () => {
-        const isSelected = shortlist.includes(proj);
-
+        const isSelected = shortlist.includes(project);
         if (isSelected) {
-          shortlist = shortlist.filter(x => x !== proj);
+          shortlist = shortlist.filter(x => x !== project);
         } else {
-          shortlist.push(proj);
+          shortlist.push(project);
         }
-
         render();
       };
 
