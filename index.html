@@ -129,7 +129,7 @@ function selectAll(groupName){
 function updateTotals(){
  const projectTotal=shortlist.reduce((a,b)=>a+b.cost,0);
  const escSelected=shortlist.some(i=>i.title==="Every Second Counts");
- const totalDonation=escSelected? projectTotal/0.70 : projectTotal*1.10;
+ const totalDonation=escSelected? projectTotal/0.70 : projectTotal/0.90;
  const totalImpact=shortlist.reduce((a,b)=>a+b.impact,0);
  document.getElementById('totals').innerHTML=`Total Cost*: £${Math.round(totalDonation).toLocaleString()}<br>Lives changed: ${totalImpact.toLocaleString()}`;
  document.getElementById('adminNote').innerHTML='<em>*includes 10% Admin fee.</em>';
