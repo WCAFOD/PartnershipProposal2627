@@ -182,7 +182,11 @@ function buildShareMessage(){
 function shareWhatsApp(){ if(!shortlist.length) return alert('Select at least one project.'); window.open(`https://wa.me/?text=${buildShareMessage()}`); }
 function shareEmail(){ if(!shortlist.length) return alert('Select at least one project.'); window.location.href=`mailto:?subject=My Shortlisted Projects&body=${buildShareMessage()}`; }
 
-render(); updateTotals();
+/* INITIALISE */
+loadShortlist();
+render();
+updateTotals();
 </script>
+
 </body>
 </html>
