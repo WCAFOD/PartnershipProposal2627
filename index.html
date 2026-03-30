@@ -88,6 +88,28 @@ const groups=[
 
 let shortlist=[];
 
+ /* SAVE SHORTLIST */
+function saveShortlist(){
+  localStorage.setItem("cafodShortlist2026", JSON.stringify(shortlist.map(i => i.title)));
+}
+
+/* LOAD SHORTLIST */
+function loadShortlist(){
+  const saved = localStorage.getItem("cafodShortlist2026");
+  if (!saved) return;
+  const titles = JSON.parse(saved);
+
+  shortlist = [];
+
+  groups.forEach(g => {
+    g.items.forEach(item => {
+      if (titles.includes(item.title)) {
+        shortlist.push(item);
+      }
+    });
+  });
+}
+
 /* RENDER TILES */
 function render(){
  const app=document.getElementById('app'); app.innerHTML="";
